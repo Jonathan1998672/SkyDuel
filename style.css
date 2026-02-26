@@ -1,0 +1,69 @@
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(circle, #0f0f1f, #000);
+    color: cyan;
+    overflow: hidden;
+}
+
+.screen {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding-top: 100px;
+}
+
+.active {
+    display: block;
+}
+
+.logo {
+    font-size: 60px;
+    text-shadow: 0 0 20px cyan;
+}
+
+button {
+    display: block;
+    margin: 15px auto;
+    padding: 15px 30px;
+    background: transparent;
+    border: 2px solid cyan;
+    color: cyan;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: cyan;
+    color: black;
+    box-shadow: 0 0 20px cyan;
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+.pause {
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    background: rgba(0,0,0,0.8);
+    padding: 30px;
+    border: 2px solid cyan;
+}
+
+.hidden {
+    display: none;
+}
