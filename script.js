@@ -1,4 +1,7 @@
-let scene, camera, renderer, cube;
+import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
+
+let scene, camera, renderer, dron;
 let keys = {};
 let gameMode = "";
 let animationId;
@@ -12,7 +15,7 @@ function showScreen(id) {
 function saveSettings() {
     const name = document.getElementById("username").value;
     localStorage.setItem("username", name);
-    alert("Guardado!");
+    alert("¡Configuración guardada!");
 }
 
 function startGame(mode) {
@@ -23,47 +26,87 @@ function startGame(mode) {
 }
 
 function initGame() {
-
     const canvas = document.getElementById("gameCanvas");
 
     scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0535);
+
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 8);
 
-    renderer = new THREE.WebGLRenderer({canvas});
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
 
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshStandardMaterial({color: 0x00ffff});
-    cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
 
-    const light = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(light);
+    const sunLight = new THREE.DirectionalLight(0x47a3c0, 2);
+    sunLight.position.set(5, 10, 5);
+    scene.add(sunLight);
 
-    camera.position.z = 5;
+    const loader = new GLTFLoader();
+    loader.load('assets-modelos/dron.glb', function (gltf) {
+        dron = gltf.scene;
+        dron.scale.set(6, 6, 6);
+        dron.position.y = 1;
+        scene.add(dron);
+    },
+        (xhr) => { console.log((xhr.loaded / xhr.total * 100) + '% cargado'); },
+        (error) => { console.error('Error al cargar el modelo:', error); });
 
     animate();
 }
 
 function animate() {
-    if (!paused) {
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
+    animationId = requestAnimationFrame(animate);
 
-        if (keys["w"]) cube.position.z -= 0.1;
-        if (keys["s"]) cube.position.z += 0.1;
-        if (keys["a"]) cube.position.x -= 0.1;
-        if (keys["d"]) cube.position.x += 0.1;
+    if (!paused) {
+
+        if (dron) {
+            if (keys["a"]) {
+                if (dron.rotation.z <= 0.5) dron.rotation.z += 0.05;
+                if (dron.position.x >= -3) dron.position.x -= 0.1;
+            }
+            else if (keys["d"]) {
+                if (dron.rotation.z >= -0.5) dron.rotation.z -= 0.05;
+                if (dron.position.x <= 3) dron.position.x += 0.1;
+            }
+            else {
+                dron.position.x *= 0.9;
+                dron.rotation.z *= 0.9;
+            }
+            if (keys["w"]) {
+                if (dron.rotation.x <= 0.4) dron.rotation.x += 0.05;
+                if (dron.position.y <= 3) dron.position.y += 0.1;
+            }
+            else if (keys["s"]) {
+                if (dron.rotation.x >= -0.4) dron.rotation.x -= 0.05;
+                if (dron.position.y >= -1) dron.position.y -= 0.1;
+            }
+            else {
+                dron.position.y += (1 - dron.position.y) * 0.1;
+                dron.rotation.x *= 0.9;
+            }
+        }
 
         renderer.render(scene, camera);
     }
-
-    animationId = requestAnimationFrame(animate);
 }
+
+window.addEventListener('resize', () => {
+    if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+});
 
 document.addEventListener("keydown", e => {
     keys[e.key.toLowerCase()] = true;
-    if (e.key === "Escape") pauseGame();
+    if (e.key === "Escape") {
+        if (paused) resumeGame(); else pauseGame();
+    }
 });
 
 document.addEventListener("keyup", e => {
@@ -81,6 +124,17 @@ function resumeGame() {
 }
 
 function exitGame() {
+    paused = false;
     cancelAnimationFrame(animationId);
+    if (renderer) renderer.dispose();
     showScreen("mainMenu");
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    window.showScreen = showScreen;
+    window.startGame = startGame;
+    window.saveSettings = saveSettings;
+    window.pauseGame = pauseGame;
+    window.resumeGame = resumeGame;
+    window.exitGame = exitGame;
+});
