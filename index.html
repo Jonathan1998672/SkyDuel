@@ -1,60 +1,82 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>SKY DUEL</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+
+    <!--Fuentes-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Keania+One&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
 
-<!--MENU PRINCIPAL-->
-<div id="mainMenu" class="screen active">
-    <h1 class="logo">SKY DUEL</h1>
-    <button onclick="showScreen('modeMenu')">JUGAR</button>
-    <button onclick="showScreen('settingsMenu')">CONFIGURACIÓN</button>
-    <button onclick="showScreen('scoreMenu')">PUNTUACIONES</button>
-</div>
+    <!--FONDO ANIMADO-->
+    <div class="background">
 
-<!--SELECCION DE MODO-->
-<div id="modeMenu" class="screen">
-    <h2>Selecciona modo</h2>
-    <button onclick="startGame('race')">CARRERAS</button>
-    <button onclick="startGame('combat')">COMBATE</button>
-    <button onclick="showScreen('mainMenu')">VOLVER</button>
-</div>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
 
-<!--CONFIGURACION-->
-<div id="settingsMenu" class="screen">
-    <h2>Configuración</h2>
-    <input type="text" id="username" placeholder="Nombre de usuario">
-    <button onclick="saveSettings()">Guardar</button>
-    <button onclick="showScreen('mainMenu')">VOLVER</button>
-</div>
-
-<!--SCOREBOARD-->
-<div id="scoreMenu" class="screen">
-    <h2>Puntuaciones</h2>
-    <div id="scoreBoard"></div>
-    <button onclick="showScreen('mainMenu')">VOLVER</button>
-</div>
-
-<!--JUEGO-->
-<div id="gameScreen" class="screen">
-    <div id="hud">
-        <div>Modo: <span id="modeText"></span></div>
-        <div>Vida: <span id="life">100</span></div>
-        <div>Turbo: <span id="turbo">100</span></div>
     </div>
-    <button id="pauseBtn" onclick="pauseGame()">PAUSA</button>
-    <div id="pauseMenu" class="pause hidden">
-        <h2>PAUSA</h2>
-        <button onclick="resumeGame()">Reanudar</button>
-        <button onclick="exitGame()">Salir</button>
-    </div>
-    <canvas id="gameCanvas"></canvas>
-</div>
 
-<script src="script.js"></script>
+
+    <!--MENU PRINCIPAL-->
+    <div id="mainMenu" class="screen active">
+        <h1 class="logo">SKY DUEL</h1>
+        <button onclick="showScreen('modeMenu')">JUGAR</button>
+        <button onclick="showScreen('settingsMenu')">CONFIGURACIÓN</button>
+        <button onclick="showScreen('scoreMenu')">PUNTUACIONES</button>
+    </div>
+
+    <!--SELECCION DE MODO-->
+    <div id="modeMenu" class="screen">
+        <h2>Selecciona modo</h2>
+        <button onclick="startGame('race')">CARRERAS</button>
+        <button onclick="startGame('combat')">COMBATE</button>
+        <button onclick="showScreen('mainMenu')">VOLVER</button>
+    </div>
+
+    <!--CONFIGURACION-->
+    <div id="settingsMenu" class="screen">
+        <h2>Configuración</h2>
+        <input type="text" id="username" placeholder="Nombre de usuario">
+        <button onclick="saveSettings()">Guardar</button>
+        <button onclick="showScreen('mainMenu')">VOLVER</button>
+    </div>
+
+    <!--SCOREBOARD-->
+    <div id="scoreMenu" class="screen">
+        <h2>Puntuaciones</h2>
+        <div id="scoreBoard"></div>
+        <button onclick="showScreen('mainMenu')">VOLVER</button>
+    </div>
+
+    <!--JUEGO-->
+    <div id="gameScreen" class="screen">
+        <div id="hud">
+            <div>Modo: <span id="modeText"></span></div>
+            <div>Vida: <span id="life">100</span></div>
+            <div>Turbo: <span id="turbo">100</span></div>
+        </div>
+        <button id="pauseBtn" onclick="pauseGame()">PAUSA</button>
+        <div id="pauseMenu" class="pause hidden">
+            <h2>PAUSA</h2>
+            <button onclick="resumeGame()">Reanudar</button>
+            <button onclick="exitGame()">Salir</button>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script src="script.js"></script>
 </body>
+
 </html>
