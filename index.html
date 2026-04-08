@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>SKY DUEL</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-settings.css">
 
-    <!--Fuentes-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Keania+One&display=swap" rel="stylesheet">
@@ -66,16 +66,9 @@
     <!--SELECCION DE MODO-->
     <div id="connectionMenu" class="screen">
         <h2>TIPO DE CONEXIÓN</h2>
-        <button onclick="showScreen('modeMenu')">LOCAL</button>
+        <button onclick="alert('Sección Local en rediseño.')">LOCAL</button>
         <button onclick="alert('Servidores no disponibles por el momento.')">MULTIJUGADOR</button>
         <button onclick="showScreen('mainMenu')">VOLVER</button>
-    </div>
-
-    <div id="modeMenu" class="screen">
-        <h2>MODO LOCAL</h2>
-        <button onclick="startGame('race')">CARRERAS</button>
-        <button onclick="startGame('combat')">COMBATE</button>
-        <button onclick="showScreen('connectionMenu')">VOLVER</button>
     </div>
 
     <!--CONFIGURACION-->
@@ -143,28 +136,6 @@
         <button onclick="showScreen('mainMenu')">VOLVER</button>
     </div>
 
-    <!--JUEGO-->
-    <div id="gameScreen" class="screen">
-        <div id="hud">
-            <div>MODO: <span id="modeText"></span></div>
-        </div>
-
-        <div id="dynamicHUD" class="bottom-right-hud">
-            <div id="statsInfo" class="stats-counter">--</div>
-            <div class="bar-container">
-                <img id="dynamicBar" src="" alt="Barra de estado">
-            </div>
-        </div>
-
-        <div id="pauseMenu" class="pause hidden">
-            <h2>PAUSA</h2>
-            <button onclick="resumeGame()">Reanudar</button>
-            <button onclick="openSettingsFromGame()">CONFIGURACIÓN</button>
-            <button onclick="exitGame()">Salir</button>
-        </div>
-        <canvas id="gameCanvas"></canvas>
-    </div>
-
     <script type="importmap">
         {
             "imports": {
@@ -175,8 +146,9 @@
 
     <audio id="bgMusic" loop></audio>
 
-    <script type="module" src="script.js"></script>
-
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/settings.js"></script>
+    <script type="module" src="js/main.js"></script>
 
 </body>
 
