@@ -34,3 +34,8 @@ export function logout() {
 window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
 window.logout = logout;
+
+//en el registro has que si no selecciono una imagen pues que no guarde la ruta de la imagen porque por default ya guarda la imagen default.png
+//pero si selecciona una imagen entonces que la imagen seleccionada la recorte en cuadrado y lo gaurde con un tamaño de 800 x 800 con su nombre en formato .png 
+
+//las validaciones que solo sea que no se repita el nombre de usuario y las validaciones basicas de la contraseña 
