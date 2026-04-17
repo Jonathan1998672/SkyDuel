@@ -1,0 +1,205 @@
+/* --- LAYOUT PRINCIPAL DE CONFIGURACIÓN --- */
+.settings-layout {
+    display: flex;
+    gap: 20px;
+    background: rgba(0, 10, 15, 0.95); /* Fondo más profundo y temático */
+    border: 2px solid #00f2ff;
+    padding: 25px;
+    border-radius: 5px; /* Bordes menos redondeados para look militar */
+    min-width: 600px;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    position: relative;
+}
+
+/* --- PESTAÑAS LATERALES --- */
+.settings-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-right: 1px solid rgba(0, 242, 255, 0.3);
+    padding-right: 20px;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #00f2ff;
+    border: 1px solid #00f2ff;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Keania One', cursive;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tab-btn:hover {
+    background: rgba(0, 242, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
+
+.tab-btn.active {
+    background: #00f2ff;
+    color: #000;
+    box-shadow: 0 0 15px #00f2ff;
+}
+
+.back-btn {
+    margin-top: auto; /* Empuja el botón volver al fondo */
+    font-size: 0.9em;
+    border-color: #ff00ff; /* Un toque de color distinto para navegación */
+    color: #ff00ff;
+}
+
+/* --- CONTENIDO DE LAS PESTAÑAS --- */
+.settings-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tab-section {
+    width: 100%;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- FICHA DE PILOTO (CARNET DIGITAL) --- */
+.pilot-card {
+    background: rgba(0, 20, 30, 0.8);
+    border: 1px solid #00f2ff;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.15);
+}
+
+/* Efecto de línea de escaneo láser */
+.pilot-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 242, 255, 0.6);
+    box-shadow: 0 0 10px #00f2ff;
+    animation: scanLine 4s linear infinite;
+    z-index: 2;
+}
+
+@keyframes scanLine {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
+
+.card-header {
+    background: #00f2ff;
+    color: #000;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 4px 12px;
+    margin-bottom: 20px;
+    font-family: 'Keania One', cursive;
+    text-align: center;
+}
+
+.info-row {
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+    padding-bottom: 8px;
+}
+
+.label {
+    color: #88aab0; /* Color cian grisáceo para etiquetas */
+    font-size: 0.75em;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.value {
+    color: #fff;
+    font-size: 1.1em;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+.rank-badge {
+    color: #ffd700; /* Oro para los rangos */
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.7);
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* --- BOTÓN LOGOUT --- */
+.btn-danger {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+    border: 1px solid #ff4444;
+    padding: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    width: 100%;
+    font-family: 'Keania One', cursive;
+    transition: all 0.3s;
+}
+
+.btn-danger:hover {
+    background: #ff4444;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+}
+
+/* --- SECCIÓN SONIDO --- */
+.audio-control {
+    padding: 20px;
+    text-align: center;
+}
+
+.audio-control label {
+    display: block;
+    color: #00f2ff;
+    margin-bottom: 20px;
+    font-family: 'Keania One', cursive;
+    letter-spacing: 2px;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 242, 255, 0.2);
+    border-radius: 2px;
+    accent-color: #00f2ff;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #00f2ff;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00f2ff;
+}
+
+#volume-value {
+    display: block;
+    margin-top: 10px;
+    color: #fff;
+    font-family: monospace;
+}
+
+/* --- UTILIDADES --- */
+.hidden {
+    display: none !important;
+}

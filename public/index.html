@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKY DUEL</title>
+    <link rel="icon" type="image/x-icon" href="assets-imagenes/icono.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Keania+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style-settings.css">
+</head>
+
+<body>
+
+    <div class="background">
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+        <span><img src="assets-imagenes/drone.svg"></span>
+    </div>
+
+    <div class="main-container">
+        <h1 class="main-title">SKY DUEL</h1>
+
+        <div id="login-panel" class="auth-card">
+            <h2>LOGIN</h2>
+            <div class="input-group">
+                <input type="text" id="lUser" placeholder="Usuario" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="lPass" placeholder="Contraseña" required>
+            </div>
+
+            <button class="btn-primary" onclick="login()">ENTRAR</button>
+
+            <p class="switch-auth">
+                ¿No tienes cuenta? <a href="#" onclick="showPanel('register')">Regístrate aquí</a>
+            </p>
+        </div>
+
+        <div id="register-panel" class="auth-card hidden">
+            <h2>REGISTRO</h2>
+            <div class="input-group">
+                <input type="text" id="rUser" placeholder="Usuario" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="rPass" placeholder="Contraseña" required>
+            </div>
+
+            <button class="btn-primary" onclick="register()">CREAR CUENTA</button>
+
+            <p class="switch-auth">
+                ¿Ya tienes cuenta? <a href="#" onclick="showPanel('login')">Inicia sesión</a>
+            </p>
+        </div>
+
+        <div id="menu-panel" class="menu-container hidden">
+            <div class="online-list">
+                <h3>PILOTOS ONLINE</h3>
+                <ul id="lista-usuarios"></ul>
+            </div>
+
+            <div id="main-buttons" class="central-buttons">
+                <button class="btn-menu" onclick="togglePlayMenu(true)">JUGAR</button>
+                <button class="btn-menu" onclick="openSettings()">CONFIGURACIÓN</button>
+                <button class="btn-menu">PUNTUACIONES</button>
+            </div>
+
+            <div id="play-submenu" class="central-buttons hidden">
+                <button class="btn-menu" onclick="showPanel('mode')">CREAR SALA</button>
+                <button class="btn-menu" onclick="showPanel('rooms')">UNIRSE A SALA</button>
+                <button class="btn-menu back-btn" onclick="togglePlayMenu(false)">VOLVER</button>
+            </div>
+
+            <div class="user-status-box">
+                <span id="connected-user-name">Usuario</span>
+                <span class="status-dot"></span>
+            </div>
+        </div>
+
+        <div id="mode-panel" class="menu-container hidden">
+            <h2>SELECCIONAR MODO</h2>
+            <div class="central-buttons">
+                <button class="btn-menu" onclick="crearSala('CARRERA')">MODO CARRERA</button>
+                <button class="btn-menu" onclick="crearSala('COMBATE')">MODO COMBATE</button>
+                <button class="btn-menu back-btn" onclick="showPanel('menu')">VOLVER</button>
+            </div>
+        </div>
+
+        <div id="lobby-panel" class="menu-container hidden">
+            <h2 id="lobby-title">SALA DE ESPERA</h2>
+            <div class="lobby-box">
+                <div class="lobby-header">
+                    MODO: <span id="lobby-mode-text">---</span>
+                </div>
+                <table class="lobby-table">
+                    <thead>
+                        <tr>
+                            <th>PILOTO</th>
+                            <th>ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lobby-players-list">
+                    </tbody>
+                </table>
+                <p><span id="player-count">0</span>/4 PILOTOS</p>
+            </div>
+            <div class="central-buttons">
+                <button class="btn-menu" id="btn-start-game">JUGAR</button>
+                <button class="btn-menu back-btn" onclick="salirDeLaSala()">SALIR DE LA SALA</button>
+            </div>
+        </div>
+
+        <div id="rooms-panel" class="menu-container hidden">
+            <h2>SALAS DISPONIBLES</h2>
+            <div class="rooms-list-container">
+                <table class="rooms-table">
+                    <thead>
+                        <tr>
+                            <th>HOST</th>
+                            <th>MODO</th>
+                            <th>CUPO</th>
+                            <th>ACCION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="available-rooms-list">
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn-menu back-btn" onclick="showPanel('menu')">VOLVER</button>
+        </div>
+
+        <div id="settings-panel" class="menu-container hidden">
+            <div class="settings-layout">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" onclick="switchTab('account')">CUENTA</button>
+                    <button class="tab-btn" onclick="switchTab('audio')">SONIDO</button>
+                    <button class="btn-menu back-btn" onclick="showPanel('menu')">VOLVER</button>
+                </div>
+
+                <div class="settings-content">
+                    <div id="tab-account" class="tab-section">
+                        <div class="pilot-card">
+                            <div class="card-header">EXPEDIENTE DE VUELO</div>
+                            <div class="card-body">
+                                <div class="pilot-info">
+                                    <div class="info-row">
+                                        <span class="label">IDENTIFICACIÓN:</span>
+                                        <span id="card-name" class="value">Jona</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">RANGO CARRERA:</span>
+                                        <span id="card-rank-race" class="rank-badge race">RECLUTA</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">RANGO COMBATE:</span>
+                                        <span id="card-rank-combat" class="rank-badge combat">RECLUTA</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">ALTA EN SISTEMA:</span>
+                                        <span id="card-date" class="value">17/04/2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn-danger" onclick="logout()">LOGOUT</button>
+                        </div>
+                    </div>
+
+                    <div id="tab-audio" class="tab-section hidden">
+                        <div class="audio-control">
+                            <label>VOLUMEN DE MÚSICA</label>
+                            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.4"
+                                oninput="updateVolume(this.value)">
+                            <span id="volume-value">40%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="bgMusic" loop></audio>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

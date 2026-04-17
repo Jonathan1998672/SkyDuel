@@ -1,0 +1,275 @@
+/* ==========================================================================
+   1. VARIABLES Y ESTILOS BASE
+   ========================================================================== */
+body {
+    margin: 0;
+    font-family: "Keania One", sans-serif;
+    color: #00ffff;
+    overflow: hidden; /* Evita scrollbars para mantener la estética de app */
+    height: 100vh;
+    width: 100vw;
+    background: #02060b;
+}
+
+/* Clase de utilidad para ocultar paneles */
+.hidden { display: none !important; }
+
+/* ==========================================================================
+   2. CONTENEDOR PRINCIPAL Y FONDO (CIUDAD + DRONES)
+   ========================================================================== */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+    padding-top: 8vh;
+}
+
+.background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: url('assets-imagenes/city.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(1.2) saturate(1.8) contrast(1.1);
+    animation: slowZoom 20s infinite alternate ease-in-out;
+    z-index: -1;
+}
+
+/* Efecto de viñeta radial sobre el fondo */
+.background::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+}
+
+/* Estilo y animación para los drones flotantes */
+.background span {
+    position: fixed;
+    bottom: -80px;
+    animation: animate 10s linear infinite;
+}
+
+.background img {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 0 15px cyan) saturate(2);
+}
+
+/* Posicionamiento individual de los drones */
+.background span:nth-child(1) { left: 5%; animation-duration: 12s; }
+.background span:nth-child(2) { left: 15%; animation-duration: 8s; animation-delay: 2s; }
+.background span:nth-child(3) { left: 25%; animation-duration: 15s; }
+.background span:nth-child(4) { left: 35%; animation-duration: 10s; animation-delay: 5s; }
+.background span:nth-child(5) { left: 45%; animation-duration: 7s; }
+.background span:nth-child(6) { left: 55%; animation-duration: 11s; animation-delay: 3s; }
+.background span:nth-child(7) { left: 65%; animation-duration: 9s; }
+.background span:nth-child(8) { left: 75%; animation-duration: 14s; animation-delay: 1s; }
+.background span:nth-child(9) { left: 85%; animation-duration: 6s; }
+.background span:nth-child(10) { left: 95%; animation-duration: 13s; animation-delay: 4s; }
+
+/* Animaciones de movimiento */
+@keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+@keyframes animate {
+    0% { transform: translateY(0); opacity: 1; }
+    70% { opacity: .8; }
+    100% { transform: translateY(-800px); opacity: 0; }
+}
+
+/* ==========================================================================
+   3. LOGOTIPO Y TÍTULO (EFECTO NEÓN)
+   ========================================================================== */
+.main-title {
+    font-size: 110px;
+    font-weight: 400;
+    text-align: center;
+    background: linear-gradient(to bottom, #b2f0f9, #00ffff, #0088cc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.8)) 
+            drop-shadow(0 0 20px rgba(0, 255, 255, 0.4))
+            drop-shadow(0 0 40px rgba(0, 0, 0, 1));
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+    position: relative;
+    z-index: 10;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* ==========================================================================
+   4. INTERFAZ DE USUARIO (PANELES, BOTONES Y CARDS)
+   ========================================================================== */
+
+/* Tarjetas de autenticación */
+.auth-card {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: 2px solid #00ffff;
+    width: 380px;
+    margin: 0 auto;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    text-align: center;
+}
+
+/* Inputs de texto estilo terminal */
+.input-group input {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid #00ffff;
+    color: white;
+    font-family: "Keania One", sans-serif;
+    outline: none;
+}
+
+/* Botones principales y del menú */
+.btn-primary, .btn-menu {
+    background: rgba(0, 20, 40, 0.8);
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    padding: 15px 30px;
+    font-family: "Keania One", sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    letter-spacing: 2px;
+}
+
+.btn-primary:hover, .btn-menu:hover {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 30px #00ffff;
+    transform: scale(1.05);
+}
+
+.link {
+    color: #00ffff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   5. COMPONENTES DEL JUEGO (LOBBY, ONLINE LIST, TABLAS)
+   ========================================================================== */
+
+/* Contenedor central de botones */
+.central-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 320px;
+    margin: 50px auto;
+}
+
+/* Caja de estado del usuario (Esquina inferior derecha) */
+.user-status-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-left: 4px solid #00ffff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: -5px 0 15px rgba(0, 255, 255, 0.2);
+}
+
+#connected-user-name { font-size: 18px; text-shadow: 0 0 5px #00ffff; }
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    background: #00ff00;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff00;
+}
+
+/* Lista de pilotos online (Esquina izquierda) */
+.online-list {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #00ffff;
+    padding: 20px;
+    width: 200px;
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.online-list h3 {
+    font-size: 14px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #00ffff;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.online-list ul { list-style: none; padding: 0; }
+
+.online-list li {
+    padding: 8px 0;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+    color: #fff;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+/* Tablas de Salas y Lobby */
+.lobby-table, .rooms-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: rgba(0, 255, 255, 0.05);
+}
+
+.lobby-table th, .rooms-table th {
+    border-bottom: 2px solid #00ffff;
+    padding: 10px;
+    color: #00ffff;
+    text-transform: uppercase;
+}
+
+.lobby-table td, .rooms-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    text-align: center;
+}
+
+.host-tag {
+    color: #ffd700; /* Color dorado para el Host */
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+/* Botón pequeño para acciones de tabla (ej: Unirse) */
+.btn-small {
+    background: transparent;
+    border: 1px solid #00ffff;
+    color: #00ffff;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.btn-small:disabled {
+    border-color: #555;
+    color: #555;
+    cursor: not-allowed;
+}
