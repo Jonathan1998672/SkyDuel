@@ -190,10 +190,18 @@
     <audio id="bgMusic" loop></audio>
 
     <div id="game-canvas-container" class="hidden"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="game3d.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="game3d.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 
 </html>

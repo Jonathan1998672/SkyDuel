@@ -1,9 +1,5 @@
-/**
- * SKY DUEL - Lógica del Cliente
- * Control de UI, Socket.io y peticiones al Servidor
- */
-
-const socket = io();
+window.socket = io(); 
+const socket = window.socket;
 
 // ==========================================
 // 1. REFERENCIAS A ELEMENTOS DEL DOM
@@ -334,3 +330,15 @@ socket.on('iniciarJuego', (jugadores) => {
 window.addEventListener('beforeunload', () => {
     socket.disconnect();
 });
+
+window.login = login;
+window.register = register;
+window.showPanel = showPanel;
+window.togglePlayMenu = togglePlayMenu;
+window.openSettings = openSettings;
+window.logout = logout;
+window.crearSala = crearSala;
+window.unirse = unirse;
+window.salirDeLaSala = salirDeLaSala;
+window.switchTab = switchTab;
+window.updateVolume = updateVolume;
