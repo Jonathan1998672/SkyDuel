@@ -17,7 +17,8 @@ const panels = {
     settings: document.getElementById('settings-panel'),
     mode: document.getElementById('mode-panel'),
     lobby: document.getElementById('lobby-panel'),
-    rooms: document.getElementById('rooms-panel')
+    rooms: document.getElementById('rooms-panel'),
+    game: document.getElementById('game-canvas-container')
 };
 
 // Campos de entrada (Inputs)
@@ -75,7 +76,7 @@ function togglePlayMenu(show) {
 function switchTab(tabName) {
     document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    
+
     document.getElementById(`tab-${tabName}`).classList.remove('hidden');
     event.currentTarget.classList.add('active');
 }
@@ -107,7 +108,7 @@ function updateVolume(val) {
 // Inicialización de música al cargar
 document.addEventListener("DOMContentLoaded", () => {
     setRandomMenuMusic();
-    
+
     // El audio solo puede iniciar tras la primera interacción del usuario
     document.body.addEventListener('click', () => {
         const music = document.getElementById("bgMusic");
@@ -195,7 +196,7 @@ async function openSettings() {
 function logout() {
     socket.emit('abandonarSala');
     socket.disconnect();
-    location.reload(); 
+    location.reload();
 }
 
 // ==========================================
@@ -250,16 +251,37 @@ socket.on('salaActualizada', (sala) => {
     document.getElementById('lobby-mode-text').innerText = sala.modo;
     const list = document.getElementById('lobby-players-list');
     list.innerHTML = '';
-    
+
     sala.jugadores.forEach((p, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${p} ${index === 0 ? '<span class="host-tag">(HOST)</span>' : ''}</td>
-            <td class="ready-text">PREPARADO</td>
+            <td>${p.nombre} ${index === 0 ? '<span class="host-tag">(HOST)</span>' : ''}</td>
+            <td class="${p.listo ? 'ready-text' : 'waiting-text'}">
+                ${p.listo ? 'PREPARADO' : 'ESPERANDO...'}
+            </td>
         `;
         list.appendChild(row);
     });
     document.getElementById('player-count').innerText = sala.jugadores.length;
+
+    const btnStart = document.getElementById('btn-start-game');
+    const miNombre = document.getElementById('connected-user-name').innerText;
+    const yo = sala.jugadores.find(p => p.nombre === miNombre);
+
+    if (sala.jugadores.length < 2) {
+        btnStart.innerText = "ESPERANDO PILOTOS...";
+        btnStart.disabled = true;
+    } else {
+        btnStart.disabled = false;
+        btnStart.innerText = yo && yo.listo ? "¡LISTO!" : "PREPARADO";
+        btnStart.style.borderColor = yo && yo.listo ? "#00ff00" : "#00ffff";
+    }
+
+    btnStart.replaceWith(btnStart.cloneNode(true));
+    const newBtn = document.getElementById('btn-start-game');
+    newBtn.addEventListener('click', () => {
+        socket.emit('toggelListo');
+    });
 });
 
 // Actualizar lista pública de salas disponibles
@@ -271,7 +293,7 @@ socket.on('listaSalas', (salas) => {
     Object.keys(salas).forEach(hostId => {
         const sala = salas[hostId];
         const estaLlena = sala.jugadores.length >= sala.max;
-        
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${hostId}</td>
@@ -292,6 +314,20 @@ socket.on('listaSalas', (salas) => {
 socket.on('salaCerrada', () => {
     alert("La sala ha sido cerrada por el host.");
     showPanel('menu');
+});
+
+// Escuchar el inicio del juego
+socket.on('iniciarJuego', (jugadores) => {
+    console.log("¡Iniciando juego!");
+    document.querySelector('.main-container').classList.add('hidden');
+
+    const gameContainer = document.getElementById('game-canvas-container');
+    gameContainer.classList.remove('hidden');
+
+    if (typeof init3DGame === 'function') {
+        init3DGame(jugadores);
+    }
+    
 });
 
 // Limpieza al cerrar pestaña

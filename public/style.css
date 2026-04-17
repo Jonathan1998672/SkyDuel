@@ -273,3 +273,41 @@ body {
     color: #555;
     cursor: not-allowed;
 }
+.ready-text {
+    color: #00ff00; /* Verde brillante */
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.waiting-text {
+    color: #ffaa00; /* Naranja/Amarillo */
+    text-shadow: 0 0 5px #ffaa00;
+}
+
+#btn-start-game:disabled {
+    border-color: #444;
+    color: #444;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+#game-canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999; /* Asegura que esté por encima del fondo y otros menús */
+    background: #000;
+}
+
+#game-canvas-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Asegura que cuando el juego inicie, nada más estorbe */
+.hidden {
+    display: none !important;
+}

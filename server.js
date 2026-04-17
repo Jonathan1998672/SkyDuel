@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
     socket.on('crearSala', (data) => {
         const { host, modo } = data;
         if (!salas[host]) {
-            salas[host] = { modo, jugadores: [host], max: 4 };
+            salas[host] = { modo, jugadores: [{ nombre: host, listo: false }], max: 4 };
             socket.join(host);         // Crea un canal privado de socket para la sala
             socket.salaAsociada = host; // Vincula el socket a esta sala
 
@@ -134,8 +134,8 @@ io.on('connection', (socket) => {
         const sala = salas[salaId];
 
         // Verifica si la sala existe, si hay espacio y si el usuario no está ya dentro
-        if (sala && sala.jugadores.length < sala.max && !sala.jugadores.includes(usuario)) {
-            sala.jugadores.push(usuario);
+        if (sala && sala.jugadores.length < sala.max && !sala.jugadores.find(p => p.nombre === usuario)) {
+            sala.jugadores.push({ nombre: usuario, listo: false });
             socket.join(salaId);
             socket.salaAsociada = salaId;
 
@@ -147,6 +147,7 @@ io.on('connection', (socket) => {
         }
     });
 
+
     // --- EVENTO: ABANDONAR SALA ---
     socket.on('abandonarSala', () => {
         const usuario = socket.username;
@@ -154,16 +155,18 @@ io.on('connection', (socket) => {
 
         if (salaId && salas[salaId]) {
             if (salaId === usuario) {
-                // Si el que sale es el HOST: Se destruye la sala para todos
+                // Si el que sale es el HOST: Se destruye la sala
                 console.log(`🚫 Host [${usuario}] cerró la sala.`);
                 delete salas[salaId];
-                io.to(salaId).emit('salaCerrada'); 
+                io.to(salaId).emit('salaCerrada');
                 io.emit('listaSalas', salas);
             } else {
-                // Si el que sale es un JUGADOR: Solo se actualiza la lista de la sala
-                salas[salaId].jugadores = salas[salaId].jugadores.filter(p => p !== usuario);
+                // ERROR CORREGIDO AQUÍ: Filtrar comparando la propiedad .nombre
+                salas[salaId].jugadores = salas[salaId].jugadores.filter(p => p.nombre !== usuario);
+
                 socket.leave(salaId);
                 console.log(`🏃 [${usuario}] salió de la sala de [${salaId}]`);
+
                 io.to(salaId).emit('salaActualizada', salas[salaId]);
                 io.emit('listaSalas', salas);
             }
@@ -177,26 +180,58 @@ io.on('connection', (socket) => {
     // --- EVENTO: DESCONEXIÓN (Cerrar pestaña o pérdida de red) ---
     socket.on('disconnect', () => {
         if (socket.username) {
-            // Si estaba en una sala, aplicamos lógica de limpieza automática
             if (socket.salaAsociada) {
                 const salaId = socket.salaAsociada;
                 if (salaId === socket.username) {
-                    // Si era host, la sala desaparece
                     delete salas[salaId];
                     io.to(salaId).emit('salaCerrada');
                 } else if (salas[salaId]) {
-                    // Si era invitado, se quita de la lista
-                    salas[salaId].jugadores = salas[salaId].jugadores.filter(p => p !== socket.username);
+                    // ERROR CORREGIDO AQUÍ TAMBIÉN: Filtrar por p.nombre
+                    salas[salaId].jugadores = salas[salaId].jugadores.filter(p => p.nombre !== socket.username);
                     io.to(salaId).emit('salaActualizada', salas[salaId]);
                 }
                 io.emit('listaSalas', salas);
             }
-            // Eliminar de la lista global de conectados
             delete usuariosConectados[socket.username];
             io.emit('usuarios', Object.keys(usuariosConectados));
             console.log(`🔴 ${socket.username} salió.`);
         }
     });
+
+    // Dentro de socket.on('toggelListo', ...)
+    socket.on('toggelListo', () => {
+        const salaId = socket.salaAsociada;
+        if (salaId && salas[salaId]) {
+            const sala = salas[salaId];
+            const jugador = sala.jugadores.find(p => p.nombre === socket.username);
+
+            if (jugador) {
+                jugador.listo = !jugador.listo;
+                io.to(salaId).emit('salaActualizada', sala);
+
+                // NUEVO: Verificar si todos están listos y son al menos 2
+                const todosListos = sala.jugadores.every(p => p.listo === true);
+                if (todosListos && sala.jugadores.length >= 2) {
+                    console.log(`Lanzando juego en sala: ${salaId}`);
+                    io.to(salaId).emit('iniciarJuego', sala.jugadores);
+                }
+            }
+        }
+    });
+
+    // Dentro de io.on('connection', (socket) => { ... })
+    socket.on('actualizarPosicion', (datos) => {
+        const salaId = socket.salaAsociada;
+        if (salaId) {
+            socket.to(salaId).emit('jugadorMovido', {
+                id: socket.username,
+                pos: datos.pos,
+                rot: datos.rot
+            });
+        }
+    });
+
+
 });
 
 // ==========================================
