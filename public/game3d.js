@@ -35,7 +35,7 @@ window.init3DGame = function(jugadores) {
         const droneMaster = gltf.scene;
 
         const escala = 6;
-        const rotacionInicialY = 0;
+        const rotacionInicialY = Math.PI / 2;
 
         playerDrone = droneMaster.clone();
         playerDrone.scale.set(escala, escala, escala);
@@ -75,24 +75,51 @@ function animate() {
     if (playerDrone) {
         let movido = false;
         const speed = 0.15;
-        const rotationSpeed = 0.05;
+        const rotationSpeed = 0.02;
+        
+        // Variables para la animación de inclinación
+        const maxTilt = 0.4; // Qué tanto se inclina la nave (en radianes)
+        let targetTilt = 0;  // El ángulo objetivo al que debe llegar
 
+        // --- 3. Movimiento vertical (Arriba/Abajo) ---
+        // Usamos Espacio para subir y Shift para bajar
+        if (keys[' ']) { playerDrone.translateY(speed); movido = true; }
+        if (keys['shift']) { playerDrone.translateY(-speed); movido = true; }
+
+        // --- Movimiento estándar ---
         if (keys['w']) { playerDrone.translateZ(-speed); movido = true; }
         if (keys['s']) { playerDrone.translateZ(speed); movido = true; }
         if (keys['a']) { playerDrone.translateX(-speed); movido = true; }
         if (keys['d']) { playerDrone.translateX(speed); movido = true; }
         
-        if (keys['q']) { playerDrone.rotation.y += rotationSpeed; movido = true; }
-        if (keys['e']) { playerDrone.rotation.y -= rotationSpeed; movido = true; }
+        // --- 2. Rotación con animación de inclinación (Roll) ---
+        if (keys['q']) { 
+            playerDrone.rotation.y += rotationSpeed; 
+            targetTilt = maxTilt; // Se inclina hacia la izquierda
+            movido = true; 
+        }
+        else if (keys['e']) { 
+            playerDrone.rotation.y -= rotationSpeed; 
+            targetTilt = -maxTilt; // Se inclina hacia la derecha
+            movido = true; 
+        }
 
-        if (movido) {
+        // Aplicamos la inclinación suavemente usando la rotación Z (Roll)
+        // Esto hace que la transición sea fluida y regrese a 0 cuando sueltas la tecla
+        playerDrone.rotation.z += (targetTilt - playerDrone.rotation.z) * 0.1;
+
+        // Emitimos la posición si se movió o si aún se está estabilizando de la inclinación
+        if (movido || Math.abs(playerDrone.rotation.z) > 0.001) {
             window.socket.emit('actualizarPosicion', {
                 pos: playerDrone.position,
-                rot: playerDrone.rotation.y
+                rot: playerDrone.rotation.y, 
+                rotZ: playerDrone.rotation.z
             });
         }
 
-        const relativeCameraOffset = new THREE.Vector3(0, 5, 10);
+        // --- 1. Cámara estilo cenital / inclinada ---
+        // X = 0 (Centrada), Y = 15 (Más alta), Z = 6 (Más cerca de la parte trasera)
+        const relativeCameraOffset = new THREE.Vector3(-1, 3, 3);
         const cameraOffset = relativeCameraOffset.applyMatrix4(playerDrone.matrixWorld);
         
         camera.position.lerp(cameraOffset, 0.1);
